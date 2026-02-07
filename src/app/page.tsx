@@ -95,14 +95,14 @@ export default function HomePage() {
               </p>
 
               {/* CTA buttons */}
-              <div className="animate-hero-fade-up delay-600 mt-10 flex flex-col sm:flex-row items-center gap-4 justify-center lg:justify-start w-full max-w-xs sm:max-w-none mx-auto lg:mx-0">
-                <Link href="/services" className="group w-full sm:w-48">
+              <div className="animate-hero-fade-up delay-600 mt-10 flex flex-col sm:flex-row items-center gap-4 justify-center lg:justify-start w-full max-w-xs sm:max-w-md mx-auto lg:mx-0">
+                <Link href="/services" className="group w-full sm:flex-1">
                   <Button variant="primary" size="lg" className="animate-hero-pulse-glow w-full">
                     Our Services
                     <ArrowRight className="w-4 h-4 ml-2 transition-transform duration-300 group-hover:translate-x-1" strokeWidth={1.5} />
                   </Button>
                 </Link>
-                <a href={SHOP_URL} target="_blank" rel="noopener noreferrer" className="group w-full sm:w-48">
+                <a href={SHOP_URL} target="_blank" rel="noopener noreferrer" className="group w-full sm:flex-1">
                   <Button variant="outline-white" size="lg" className="w-full">
                     Visit Shop
                     <ExternalLink className="w-4 h-4 ml-2 opacity-70 group-hover:opacity-100 transition-opacity duration-300" strokeWidth={1.5} />
@@ -332,13 +332,13 @@ export default function HomePage() {
                   </div>
                 ))}
               </div>
-              <div className="mt-8 flex flex-col sm:flex-row gap-3 max-w-xs sm:max-w-none">
-                <Link href="/about" className="w-full sm:w-52">
+              <div className="mt-8 flex flex-col sm:flex-row gap-3 max-w-xs sm:max-w-md">
+                <Link href="/about" className="w-full sm:flex-1">
                   <Button variant="secondary" size="md" className="w-full">
                     About Us
                   </Button>
                 </Link>
-                <Link href="/testimonials" className="w-full sm:w-52">
+                <Link href="/testimonials" className="w-full sm:flex-1">
                   <Button variant="outline" size="md" className="w-full">
                     Testimonials &amp; Ratings
                   </Button>

@@ -295,14 +295,14 @@ export default function SaltoPage() {
               You can learn more about our company and our approach to quality by clicking the
               link below.
             </p>
-            <div className="flex flex-col sm:flex-row gap-4 justify-center max-w-xs sm:max-w-none mx-auto">
-              <Link href="/about" className="w-full sm:w-52">
+            <div className="flex flex-col sm:flex-row gap-4 justify-center max-w-xs sm:max-w-md mx-auto">
+              <Link href="/about" className="w-full sm:flex-1">
                 <Button variant="outline" size="lg" className="w-full">
                   About ECS Systems
                   <ArrowRight className="w-4 h-4 ml-2" strokeWidth={1.5} />
                 </Button>
               </Link>
-              <Link href="/contact" className="w-full sm:w-52">
+              <Link href="/contact" className="w-full sm:flex-1">
                 <Button variant="primary" size="lg" className="w-full">
                   Get in Touch
                   <ArrowRight className="w-4 h-4 ml-2" strokeWidth={1.5} />

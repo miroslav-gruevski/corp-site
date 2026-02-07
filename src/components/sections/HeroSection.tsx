@@ -122,9 +122,9 @@ export default function HeroSection({
           </p>
         )}
         {(primaryCTA || secondaryCTA) && (
-          <div className="animate-hero-fade-up delay-500 mt-10 flex flex-col sm:flex-row items-center justify-center gap-4 max-w-xs sm:max-w-none mx-auto">
+          <div className="animate-hero-fade-up delay-500 mt-10 flex flex-col sm:flex-row items-center justify-center gap-4 max-w-xs sm:max-w-md mx-auto">
             {primaryCTA && (
-              <Link href={primaryCTA.href} className="group w-full sm:w-52">
+              <Link href={primaryCTA.href} className="group w-full sm:flex-1">
                 <Button variant="primary" size="lg" className="w-full">
                   {primaryCTA.label}
                   <ArrowRight className="w-4 h-4 ml-2 transition-transform duration-300 group-hover:translate-x-1" strokeWidth={1.5} />
@@ -132,7 +132,7 @@ export default function HeroSection({
               </Link>
             )}
             {secondaryCTA && (
-              <Link href={secondaryCTA.href} className="group w-full sm:w-52">
+              <Link href={secondaryCTA.href} className="group w-full sm:flex-1">
                 <Button variant="outline-white" size="lg" className="w-full">
                   {secondaryCTA.label}
                 </Button>

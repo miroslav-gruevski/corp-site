@@ -379,8 +379,8 @@ export default function CareersPage() {
               </a>
               . We&apos;d love to hear from you.
             </p>
-            <div className="flex flex-col sm:flex-row gap-4 justify-center max-w-xs sm:max-w-none mx-auto">
-              <Link href="/contact" className="w-full sm:w-52">
+            <div className="flex flex-col sm:flex-row gap-4 justify-center max-w-xs sm:max-w-md mx-auto">
+              <Link href="/contact" className="w-full sm:flex-1">
                 <Button variant="primary" size="lg" className="w-full">
                   Contact Us
                   <ArrowRight className="w-4 h-4 ml-2" strokeWidth={1.5} />
@@ -388,7 +388,7 @@ export default function CareersPage() {
               </Link>
               <a
                 href="mailto:sales@ecssystems.co.uk?subject=CV%20Submission%20-%20ECS%20Systems"
-                className="w-full sm:w-52 inline-flex items-center justify-center font-medium rounded-lg transition-all duration-200 ease-out focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 active:scale-[0.98] hover:scale-[1.02] border hover:bg-primary/5 hover:shadow-md focus-visible:ring-primary px-6 py-3 text-base min-h-[48px]"
+                className="w-full sm:flex-1 inline-flex items-center justify-center font-medium rounded-lg transition-all duration-200 ease-out focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 active:scale-[0.98] hover:scale-[1.02] border hover:bg-primary/5 hover:shadow-md focus-visible:ring-primary px-6 py-3 text-base min-h-[48px]"
                 style={{ backgroundColor: 'transparent', color: 'var(--primary)', borderColor: 'var(--primary)' }}
               >
                 Email Your CV

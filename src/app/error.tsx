@@ -32,12 +32,12 @@ export default function Error({
         <p className="text-foreground-muted mb-8 max-w-md mx-auto">
           An unexpected error occurred. Please try again or return to the homepage.
         </p>
-        <div className="flex flex-col sm:flex-row items-center justify-center gap-4 max-w-xs sm:max-w-none mx-auto">
-          <Button variant="primary" size="md" onClick={reset} className="w-full sm:w-48">
+        <div className="flex flex-col sm:flex-row items-center justify-center gap-4 max-w-xs sm:max-w-md mx-auto">
+          <Button variant="primary" size="md" onClick={reset} className="w-full sm:flex-1">
             <RefreshCcw className="w-4 h-4 mr-2" strokeWidth={1.5} />
             Try Again
           </Button>
-          <Link href="/" className="w-full sm:w-48">
+          <Link href="/" className="w-full sm:flex-1">
             <Button variant="outline" size="md" className="w-full">
               <Home className="w-4 h-4 mr-2" strokeWidth={1.5} />
               Go to Homepage
