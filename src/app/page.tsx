@@ -52,9 +52,9 @@ export default function HomePage() {
             aria-hidden="true"
           />
           {/* Dark overlay with gradient */}
-          <div className="absolute inset-0 bg-gradient-to-r from-primary/[.97] via-primary/90 to-primary/75" />
+          <div className="absolute inset-0 bg-gradient-to-r from-primary/[.97] via-primary/90 to-primary/75 pointer-events-none" />
           {/* Shimmer overlay */}
-          <div className="absolute inset-0 hero-shimmer" />
+          <div className="absolute inset-0 hero-shimmer pointer-events-none" />
         </div>
 
         {/* Decorative geometric elements */}
@@ -135,7 +135,7 @@ export default function HomePage() {
 
         {/* Bottom gradient fade — tall and multi-stop for smooth blending */}
         <div
-          className="absolute bottom-0 left-0 right-0 h-48"
+          className="absolute bottom-0 left-0 right-0 h-48 pointer-events-none"
           style={{
             background: 'linear-gradient(to top, var(--background-secondary) 0%, rgba(248,249,250,0.7) 40%, rgba(248,249,250,0.3) 70%, transparent 100%)',
           }}
