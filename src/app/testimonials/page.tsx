@@ -91,13 +91,14 @@ export default function TestimonialsPage() {
       {/* Review site links */}
       <section className="py-8 bg-background-secondary">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
+          <div className="flex flex-col sm:flex-row items-center justify-center gap-4 max-w-xs sm:max-w-none mx-auto">
             <a
               href="https://trustedtraders.which.co.uk/businesses/ecs-systems-ltd/"
               target="_blank"
               rel="noopener noreferrer"
+              className="w-full sm:w-52"
             >
-              <Button variant="outline" size="md">
+              <Button variant="outline" size="md" className="w-full">
                 Which Trusted Trader
                 <ExternalLink className="w-4 h-4 ml-2" strokeWidth={1.5} />
               </Button>
@@ -106,8 +107,9 @@ export default function TestimonialsPage() {
               href="https://www.checkatrade.com/trades/ecssystems"
               target="_blank"
               rel="noopener noreferrer"
+              className="w-full sm:w-52"
             >
-              <Button variant="outline" size="md">
+              <Button variant="outline" size="md" className="w-full">
                 Check a Trade
                 <ExternalLink className="w-4 h-4 ml-2" strokeWidth={1.5} />
               </Button>

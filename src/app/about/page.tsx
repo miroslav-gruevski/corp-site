@@ -215,8 +215,8 @@ export default function AboutPage() {
                 </p>
               </div>
             </div>
-            <a href={SHOP_URL} target="_blank" rel="noopener noreferrer">
-              <Button variant="primary" size="md">
+            <a href={SHOP_URL} target="_blank" rel="noopener noreferrer" className="w-full sm:w-auto">
+              <Button variant="primary" size="md" className="w-full sm:w-auto">
                 Go to Shop
                 <ExternalLink className="w-4 h-4 ml-2" strokeWidth={1.5} />
               </Button>

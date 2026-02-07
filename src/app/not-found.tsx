@@ -15,15 +15,15 @@ export default function NotFound() {
           Sorry, the page you&apos;re looking for doesn&apos;t exist or has been moved.
           Try navigating back to our homepage.
         </p>
-        <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
-          <Link href="/">
-            <Button variant="primary" size="md">
+        <div className="flex flex-col sm:flex-row items-center justify-center gap-4 max-w-xs sm:max-w-none mx-auto">
+          <Link href="/" className="w-full sm:w-48">
+            <Button variant="primary" size="md" className="w-full">
               <Home className="w-4 h-4 mr-2" strokeWidth={1.5} />
               Go to Homepage
             </Button>
           </Link>
-          <Link href="/contact">
-            <Button variant="outline" size="md">
+          <Link href="/contact" className="w-full sm:w-48">
+            <Button variant="outline" size="md" className="w-full">
               Contact Us
             </Button>
           </Link>
