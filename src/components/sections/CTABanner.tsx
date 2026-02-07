@@ -63,11 +63,11 @@ export default function CTABanner({
               </p>
             </div>
           </div>
-          <Link href={ctaHref} className="flex-shrink-0 w-full lg:w-auto">
+          <Link href={ctaHref} className="flex-shrink-0 w-full sm:w-auto max-w-xs sm:max-w-none mx-auto sm:mx-0">
             <Button
               variant={variant === 'light' ? 'primary' : 'outline-white'}
               size="lg"
-              className="w-full lg:w-auto"
+              className="w-full sm:w-auto"
             >
               {ctaLabel}
             </Button>
