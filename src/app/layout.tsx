@@ -146,7 +146,7 @@ export default function RootLayout({
           <Footer />
         </div>
         <BackToTop />
-        <MobileCallButton />
+        {/* <MobileCallButton /> — removed per design decision */}
 
         <WebVitals />
         <Analytics />

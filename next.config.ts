@@ -1,5 +1,5 @@
 import type { NextConfig } from "next";
-import { withSentryConfig } from '@sentry/nextjs';
+import path from 'path';
 
 // Security headers configuration
 // Note: CSP is handled via middleware for nonce support
@@ -74,23 +74,33 @@ const nextConfig: NextConfig = {
   compress: true,
   reactStrictMode: true,
   poweredByHeader: false,
-  turbopack: {},
+  // Fix: Explicitly set Turbopack root to this project directory
+  // Prevents Turbopack from using a parent lockfile as workspace root
+  turbopack: {
+    root: path.resolve(import.meta.dirname),
+  },
 };
 
-export default withSentryConfig(nextConfig, {
-  // Sentry build options
-  org: process.env.SENTRY_ORG,
-  project: process.env.SENTRY_PROJECT,
-  authToken: process.env.SENTRY_AUTH_TOKEN,
+// Only wrap with Sentry in production builds to avoid dev-mode overhead
+// @sentry/nextjs adds ~63MB and instruments every component/route at compile time
+function getConfig(): NextConfig {
+  if (process.env.NODE_ENV === 'production') {
+    // eslint-disable-next-line @typescript-eslint/no-require-imports
+    const { withSentryConfig } = require('@sentry/nextjs');
+    return withSentryConfig(nextConfig, {
+      org: process.env.SENTRY_ORG,
+      project: process.env.SENTRY_PROJECT,
+      authToken: process.env.SENTRY_AUTH_TOKEN,
+      silent: !process.env.CI,
+      disableLogger: true,
+      bundleSizeOptimizations: {
+        excludeDebugStatements: true,
+        excludeReplayIframe: true,
+        excludeReplayShadowDom: true,
+      },
+    });
+  }
+  return nextConfig;
+}
 
-  // Only upload source maps in CI/production builds
-  silent: !process.env.CI,
-  disableLogger: true,
-
-  // Automatically tree-shake Sentry logger statements
-  bundleSizeOptimizations: {
-    excludeDebugStatements: true,
-    excludeReplayIframe: true,
-    excludeReplayShadowDom: true,
-  },
-});
+export default getConfig();

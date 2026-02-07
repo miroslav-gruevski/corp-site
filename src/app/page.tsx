@@ -106,15 +106,6 @@ export default function HomePage() {
                 </a>
               </div>
 
-              {/* Trust indicators - inline */}
-              <div className="animate-hero-fade-up delay-800 mt-10 flex flex-wrap items-center gap-x-6 gap-y-2 justify-center lg:justify-start">
-                {['NSI Gold', 'ISO 9001', 'SALTO Partner'].map((item) => (
-                  <span key={item} className="flex items-center gap-1.5 text-xs text-white/50 font-medium uppercase tracking-wider">
-                    <span className="w-1 h-1 rounded-full bg-accent/60" />
-                    {item}
-                  </span>
-                ))}
-              </div>
             </div>
 
             {/* Right side - Feature cards with stagger */}
@@ -142,8 +133,13 @@ export default function HomePage() {
           </div>
         </div>
 
-        {/* Bottom gradient fade */}
-        <div className="absolute bottom-0 left-0 right-0 h-24 bg-gradient-to-t from-background to-transparent" />
+        {/* Bottom gradient fade — tall and multi-stop for smooth blending */}
+        <div
+          className="absolute bottom-0 left-0 right-0 h-48"
+          style={{
+            background: 'linear-gradient(to top, var(--background-secondary) 0%, rgba(248,249,250,0.7) 40%, rgba(248,249,250,0.3) 70%, transparent 100%)',
+          }}
+        />
       </section>
 
       {/* Service Categories */}

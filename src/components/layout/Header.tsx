@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useRef, useEffect } from 'react';
+import { useState, useRef, useEffect, useCallback } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { usePathname } from 'next/navigation';
@@ -22,13 +22,17 @@ export default function Header() {
   const [openDropdown, setOpenDropdown] = useState<string | null>(null);
   const [isScrolled, setIsScrolled] = useState(false);
   const dropdownTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const mobileMenuRef = useRef<HTMLDivElement>(null);
 
-  // Close menu on route change — setState here is intentional since
-  // navigation is an external event that should reset UI state.
-  useEffect(() => {
-    setIsMenuOpen(false); // eslint-disable-line react-hooks/set-state-in-effect
+  const closeMenu = useCallback(() => {
+    setIsMenuOpen(false);
     setOpenDropdown(null);
-  }, [pathname]);
+  }, []);
+
+  // Close menu on route change
+  useEffect(() => {
+    closeMenu();
+  }, [pathname, closeMenu]);
 
   // Add shadow on scroll
   useEffect(() => {
@@ -42,29 +46,39 @@ export default function Header() {
   // Close mobile menu on escape
   useEffect(() => {
     const handleEscape = (e: KeyboardEvent) => {
-      if (e.key === 'Escape') {
-        setIsMenuOpen(false);
-        setOpenDropdown(null);
-      }
+      if (e.key === 'Escape') closeMenu();
     };
     document.addEventListener('keydown', handleEscape);
     return () => document.removeEventListener('keydown', handleEscape);
-  }, []);
+  }, [closeMenu]);
 
-  // Lock body scroll when mobile menu is open
+  // Lock body scroll when mobile menu is open.
+  // We use position:fixed instead of overflow:hidden because
+  // overflow:hidden breaks position:sticky on the header when scrolled.
+  const scrollYRef = useRef(0);
   useEffect(() => {
     if (isMenuOpen) {
-      document.body.style.overflow = 'hidden';
+      scrollYRef.current = window.scrollY;
+      document.body.style.position = 'fixed';
+      document.body.style.top = `-${scrollYRef.current}px`;
+      document.body.style.left = '0';
+      document.body.style.right = '0';
     } else {
-      document.body.style.overflow = '';
+      document.body.style.position = '';
+      document.body.style.top = '';
+      document.body.style.left = '';
+      document.body.style.right = '';
+      window.scrollTo(0, scrollYRef.current);
     }
     return () => {
-      document.body.style.overflow = '';
+      document.body.style.position = '';
+      document.body.style.top = '';
+      document.body.style.left = '';
+      document.body.style.right = '';
     };
   }, [isMenuOpen]);
 
   // Focus trap for mobile menu
-  const mobileMenuRef = useRef<HTMLDivElement>(null);
   useEffect(() => {
     if (!isMenuOpen || !mobileMenuRef.current) return;
 
@@ -106,13 +120,11 @@ export default function Header() {
 
   const isActive = (href: string) => {
     if (href === '/') return pathname === '/';
-    // Match exact path or sub-paths, handle trailing slashes
     const cleanPath = pathname.replace(/\/$/, '');
     const cleanHref = href.replace(/\/$/, '');
     return cleanPath === cleanHref || cleanPath.startsWith(cleanHref + '/');
   };
 
-  // For dropdown parents, check if any child route matches
   const isDropdownActive = (item: { href: string; children?: { href: string }[] }) => {
     if (item.children) {
       return item.children.some((child) => pathname.startsWith(child.href));
@@ -122,7 +134,7 @@ export default function Header() {
 
   return (
     <header className="sticky top-0 z-50 bg-white/80 backdrop-blur-xl backdrop-saturate-150">
-      {/* Top bar - contact info (hides on scroll) */}
+      {/* Top bar - contact info (hides on scroll, desktop only) */}
       <div className={`hidden lg:block bg-primary text-white transition-all duration-300 overflow-hidden ${isScrolled ? 'max-h-0' : 'max-h-12'}`}>
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between h-10 text-sm">
@@ -150,118 +162,119 @@ export default function Header() {
         </div>
       </div>
 
-      {/* Main navigation */}
+      {/* Main navigation bar */}
       <div className={`border-b transition-shadow duration-300 ${isScrolled ? 'shadow-md border-transparent' : 'border-border'}`}>
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex items-center justify-between h-[72px]">
-          {/* Logo */}
-          <Link href="/" className="flex-shrink-0" aria-label="ECS Systems - Home">
-            <Image
-              src="/ECS-logo.svg"
-              alt="ECS Systems"
-              width={64}
-              height={64}
-              className="object-contain"
-              priority
-            />
-          </Link>
-
-          {/* Desktop navigation */}
-          <nav className="hidden lg:flex items-center gap-1" aria-label="Main navigation">
-            {mainNavigation.map((item) =>
-              item.children ? (
-                <div
-                  key={item.name}
-                  className="relative"
-                  onMouseEnter={() => handleDropdownEnter(item.name)}
-                  onMouseLeave={handleDropdownLeave}
-                >
-                  <button
-                    className="nav-link flex items-center gap-1 px-3 py-2 text-sm font-medium rounded-lg"
-                    style={{ color: isDropdownActive(item) ? 'var(--accent)' : 'var(--primary)' }}
-                    aria-expanded={openDropdown === item.name}
-                    aria-haspopup="true"
-                  >
-                    {item.name}
-                    <ChevronDown
-                      className={`w-4 h-4 transition-transform duration-200 ${
-                        openDropdown === item.name ? 'rotate-180' : ''
-                      }`}
-                      strokeWidth={1.5}
-                    />
-                  </button>
-
-                  {/* Dropdown */}
-                  {openDropdown === item.name && (
-                    <div className="absolute top-full left-0 mt-1 w-56 bg-white rounded-xl border border-border shadow-lg animate-fade-in z-50">
-                      <div className="py-2">
-                        {item.children.map((child) => (
-                          <Link
-                            key={child.href}
-                            href={child.href}
-                            className={`block px-4 py-2.5 text-sm transition-colors ${
-                              isActive(child.href)
-                                ? 'text-accent font-medium bg-background-secondary'
-                                : 'text-foreground-muted hover:text-accent hover:bg-background-secondary'
-                            }`}
-                          >
-                            {child.name}
-                          </Link>
-                        ))}
-                      </div>
-                    </div>
-                  )}
-                </div>
-              ) : (
-                <Link
-                  key={item.name}
-                  href={item.href}
-                  className="nav-link flex items-center gap-1.5 px-3 py-2 text-sm font-medium rounded-lg"
-                  style={{ color: !item.external && isActive(item.href) ? 'var(--accent)' : 'var(--primary)' }}
-                  {...(item.external
-                    ? { target: '_blank', rel: 'noopener noreferrer' }
-                    : {})}
-                >
-                  {item.name}
-                  {item.external && (
-                    <ExternalLink className="w-3.5 h-3.5" strokeWidth={1.5} />
-                  )}
-                </Link>
-              )
-            )}
-          </nav>
-
-          {/* Right side actions */}
-          <div className="flex items-center gap-3">
-            <Link href="/contact" className="hidden sm:block">
-              <Button variant="primary" size="sm">
-                Get Quote
-              </Button>
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex items-center justify-between h-[72px]">
+            {/* Logo */}
+            <Link href="/" className="flex-shrink-0" aria-label="ECS Systems - Home">
+              <Image
+                src="/ECS-logo.svg"
+                alt="ECS Systems"
+                width={64}
+                height={64}
+                className="object-contain"
+                priority
+              />
             </Link>
 
-            {/* Mobile menu toggle */}
-            <button
-              className="lg:hidden p-2 rounded-lg text-primary hover:bg-background-secondary transition-colors"
-              onClick={() => setIsMenuOpen(!isMenuOpen)}
-              aria-label={isMenuOpen ? 'Close menu' : 'Open menu'}
-              aria-expanded={isMenuOpen}
-            >
-              {isMenuOpen ? (
-                <X className="w-6 h-6" strokeWidth={1.5} />
-              ) : (
-                <Menu className="w-6 h-6" strokeWidth={1.5} />
+            {/* Desktop navigation */}
+            <nav className="hidden lg:flex items-center gap-1" aria-label="Main navigation">
+              {mainNavigation.map((item) =>
+                item.children ? (
+                  <div
+                    key={item.name}
+                    className="relative"
+                    onMouseEnter={() => handleDropdownEnter(item.name)}
+                    onMouseLeave={handleDropdownLeave}
+                  >
+                    <button
+                      className="nav-link flex items-center gap-1 px-3 py-2 text-sm font-medium rounded-lg"
+                      style={{ color: isDropdownActive(item) ? 'var(--accent)' : 'var(--primary)' }}
+                      aria-expanded={openDropdown === item.name}
+                      aria-haspopup="true"
+                    >
+                      {item.name}
+                      <ChevronDown
+                        className={`w-4 h-4 transition-transform duration-200 ${
+                          openDropdown === item.name ? 'rotate-180' : ''
+                        }`}
+                        strokeWidth={1.5}
+                      />
+                    </button>
+
+                    {/* Desktop dropdown */}
+                    {openDropdown === item.name && (
+                      <div className="absolute top-full left-0 mt-1 w-56 bg-white rounded-xl border border-border shadow-lg animate-fade-in z-50">
+                        <div className="py-2">
+                          {item.children.map((child) => (
+                            <Link
+                              key={child.href}
+                              href={child.href}
+                              className={`block px-4 py-2.5 text-sm transition-colors ${
+                                isActive(child.href)
+                                  ? 'text-accent font-medium bg-background-secondary'
+                                  : 'text-foreground-muted hover:text-accent hover:bg-background-secondary'
+                              }`}
+                            >
+                              {child.name}
+                            </Link>
+                          ))}
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                ) : (
+                  <Link
+                    key={item.name}
+                    href={item.href}
+                    className="nav-link flex items-center gap-1.5 px-3 py-2 text-sm font-medium rounded-lg"
+                    style={{ color: !item.external && isActive(item.href) ? 'var(--accent)' : 'var(--primary)' }}
+                    {...(item.external
+                      ? { target: '_blank', rel: 'noopener noreferrer' }
+                      : {})}
+                  >
+                    {item.name}
+                    {item.external && (
+                      <ExternalLink className="w-3.5 h-3.5" strokeWidth={1.5} />
+                    )}
+                  </Link>
+                )
               )}
-            </button>
+            </nav>
+
+            {/* Right side actions */}
+            <div className="flex items-center gap-3">
+              <Link href="/contact" className="hidden sm:block">
+                <Button variant="primary" size="sm">
+                  Get Quote
+                </Button>
+              </Link>
+
+              {/* Mobile menu toggle */}
+              <button
+                className="lg:hidden p-2 rounded-lg text-primary hover:bg-background-secondary transition-colors"
+                onClick={() => setIsMenuOpen(!isMenuOpen)}
+                aria-label={isMenuOpen ? 'Close menu' : 'Open menu'}
+                aria-expanded={isMenuOpen}
+              >
+                {isMenuOpen ? (
+                  <X className="w-6 h-6" strokeWidth={1.5} />
+                ) : (
+                  <Menu className="w-6 h-6" strokeWidth={1.5} />
+                )}
+              </button>
+            </div>
           </div>
         </div>
       </div>
-      </div>
 
-      {/* Mobile menu */}
+      {/* Mobile menu — inside sticky header, fills remaining viewport height */}
       {isMenuOpen && (
         <div
           ref={mobileMenuRef}
-          className="lg:hidden border-t border-border animate-slide-down max-h-[calc(100svh-72px)] overflow-y-auto overscroll-contain"
+          className="lg:hidden bg-white border-t border-border overflow-y-auto overscroll-contain"
+          style={{ maxHeight: 'calc(100dvh - 72px)' }}
           role="dialog"
           aria-modal="true"
           aria-label="Mobile navigation menu"
@@ -299,7 +312,7 @@ export default function Header() {
                               ? 'text-accent font-medium bg-accent-bg'
                               : 'text-foreground-muted hover:text-accent hover:bg-background-secondary'
                           }`}
-                          onClick={() => setIsMenuOpen(false)}
+                          onClick={closeMenu}
                         >
                           {child.name}
                         </Link>
@@ -316,7 +329,7 @@ export default function Header() {
                       ? 'text-accent bg-accent-bg'
                       : 'text-primary hover:bg-background-secondary'
                   }`}
-                  onClick={() => setIsMenuOpen(false)}
+                  onClick={closeMenu}
                   {...(item.external
                     ? { target: '_blank', rel: 'noopener noreferrer' }
                     : {})}
@@ -328,6 +341,15 @@ export default function Header() {
                 </Link>
               )
             )}
+
+            {/* Mobile CTA */}
+            <div className="pt-3">
+              <Link href="/contact" className="block" onClick={closeMenu}>
+                <Button variant="primary" size="md" className="w-full">
+                  Get Quote
+                </Button>
+              </Link>
+            </div>
 
             {/* Mobile contact info */}
             <div className="pt-4 mt-4 border-t border-border space-y-3">

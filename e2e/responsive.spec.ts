@@ -77,14 +77,49 @@ test.describe('Responsive Design', () => {
       }
     });
 
-    test('mobile call button is visible', async ({ page }) => {
-      await page.goto('/');
-      // Scroll down to ensure mobile call button appears
-      await page.evaluate(() => window.scrollTo(0, 300));
+    test('mobile menu works after scrolling down the page', async ({ page }) => {
+      await page.goto('/', { waitUntil: 'domcontentloaded' });
       await page.waitForTimeout(500);
 
-      const callButton = page.locator('a[href^="tel:"]').last();
-      await expect(callButton).toBeVisible();
+      // Scroll down significantly
+      await page.evaluate(() => window.scrollTo(0, 800));
+      await page.waitForTimeout(500);
+
+      // Open menu while scrolled
+      const menuButton = page.locator('button[aria-label="Open menu"]');
+      await expect(menuButton).toBeVisible();
+      await menuButton.click();
+      await page.waitForTimeout(300);
+
+      // Menu should be visible AND on-screen (not pushed off by scroll lock)
+      const mobileNav = page.locator('nav[aria-label="Mobile navigation"]');
+      await expect(mobileNav).toBeVisible();
+      const headerBox = await page.locator('header').boundingBox();
+      expect(headerBox).toBeTruthy();
+      expect(headerBox!.y).toBeGreaterThanOrEqual(-1); // header should be at viewport top
+
+      // Close menu and verify scroll position is restored
+      await page.locator('button[aria-label="Close menu"]').click();
+      await page.waitForTimeout(300);
+      await expect(mobileNav).toBeHidden();
+      const scrollY = await page.evaluate(() => window.scrollY);
+      expect(scrollY).toBeGreaterThanOrEqual(700); // scroll restored near 800
+    });
+
+    test('mobile menu closes via X button while scrolled', async ({ page }) => {
+      await page.goto('/');
+
+      // Scroll down first
+      await page.evaluate(() => window.scrollTo(0, 600));
+      await page.waitForTimeout(300);
+
+      // Open menu
+      await page.locator('button[aria-label="Open menu"]').click();
+      await expect(page.locator('nav[aria-label="Mobile navigation"]')).toBeVisible();
+
+      // Close via X button
+      await page.locator('button[aria-label="Close menu"]').click();
+      await expect(page.locator('nav[aria-label="Mobile navigation"]')).toBeHidden();
     });
 
     test('footer stacks properly on mobile', async ({ page }) => {
