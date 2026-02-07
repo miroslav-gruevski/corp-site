@@ -30,6 +30,11 @@ const heroImages: Record<string, string> = {
   'Maintenance & Aftercare': '/images/maintenance/cctv-maintenance.jpg',
   '24/7 Maintenance & Support': '/images/maintenance/cctv-maintenance.jpg',
   'Testimonials & Ratings': '/images/homepage/why-ecs.jpg',
+  'Our Services': '/images/security/cctv.jpg',
+  'Work for Us': '/images/about/directors.jpg',
+  'Our Team': '/images/about/manufacturers.jpg',
+  'Privacy Policy': '/images/security/smart-locks.jpg',
+  'Support FAQs': '/images/homepage/monitoring.jpg',
 };
 
 interface HeroSectionProps {
@@ -59,8 +64,15 @@ export default function HeroSection({
       className={`relative bg-primary text-white overflow-hidden ${
         compact ? 'py-16 lg:py-24' : 'py-20 lg:py-32'
       }`}
+      {...(bgImage ? {
+        style: {
+          backgroundImage: `url(${bgImage})`,
+          backgroundSize: 'cover',
+          backgroundPosition: 'center',
+        },
+      } : {})}
     >
-      {/* Background image */}
+      {/* Background image — priority loaded, CSS bg-image as instant fallback */}
       {bgImage && (
         <div className="absolute inset-0">
           <Image
@@ -71,16 +83,9 @@ export default function HeroSection({
             sizes="100vw"
             aria-hidden="true"
             priority
+            fetchPriority="high"
           />
-          <div className="absolute inset-0 bg-gradient-to-r from-primary/95 via-primary/90 to-primary/75" />
-        </div>
-      )}
-
-      {/* Decorative background pattern (fallback if no image) */}
-      {!bgImage && (
-        <div className="absolute inset-0 opacity-10" aria-hidden="true">
-          <div className="absolute top-0 left-0 w-96 h-96 bg-accent rounded-full -translate-x-1/2 -translate-y-1/2" />
-          <div className="absolute bottom-0 right-0 w-[500px] h-[500px] bg-accent rounded-full translate-x-1/3 translate-y-1/3" />
+          <div className="absolute inset-0 bg-gradient-to-r from-primary/95 via-primary/90 to-primary/75 pointer-events-none" />
         </div>
       )}
 

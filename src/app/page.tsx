@@ -39,7 +39,10 @@ export default function HomePage() {
       <JsonLd type="organization" />
 
       {/* Hero Section */}
-      <section className="relative bg-primary text-white overflow-hidden min-h-[80svh] sm:min-h-[600px] lg:min-h-[700px] flex items-center">
+      <section
+        className="relative bg-primary text-white overflow-hidden min-h-[80svh] sm:min-h-[600px] lg:min-h-[700px] flex items-center"
+        style={{ backgroundImage: 'url(/images/homepage/home-security.jpg)', backgroundSize: 'cover', backgroundPosition: 'center' }}
+      >
         {/* Background image with Ken Burns */}
         <div className="absolute inset-0">
           <Image
@@ -48,6 +51,7 @@ export default function HomePage() {
             fill
             className="object-cover animate-ken-burns"
             priority
+            fetchPriority="high"
             sizes="100vw"
             aria-hidden="true"
           />
