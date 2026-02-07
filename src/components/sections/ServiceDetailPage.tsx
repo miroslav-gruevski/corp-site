@@ -161,8 +161,8 @@ export default function ServiceDetailPage({ service }: ServiceDetailPageProps) {
                 <div className="flex-1">
                   <h3 className="text-2xl font-bold text-primary mb-4">{svc.title}</h3>
                   <p className="text-foreground-muted leading-relaxed">{svc.description}</p>
-                  <Link href="/contact" className="inline-block mt-4">
-                    <Button variant="outline" size="sm">
+                  <Link href="/contact" className="block mt-4">
+                    <Button variant="outline" size="sm" className="w-full sm:w-auto">
                       Enquire
                       <ArrowRight className="w-4 h-4 ml-2" strokeWidth={1.5} />
                     </Button>

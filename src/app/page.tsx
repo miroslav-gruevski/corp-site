@@ -496,9 +496,9 @@ export default function HomePage() {
             ))}
           </div>
 
-          <div className="text-center mt-8">
-            <Link href="/testimonials">
-              <Button variant="outline" size="md">
+          <div className="mt-8 max-w-xs sm:max-w-none mx-auto">
+            <Link href="/testimonials" className="block">
+              <Button variant="outline" size="md" className="w-full sm:w-auto sm:mx-auto sm:flex">
                 View All Reviews
                 <ArrowRight className="w-4 h-4 ml-2" strokeWidth={1.5} />
               </Button>

@@ -171,8 +171,8 @@ export default function AboutPage() {
                 Do you have a question about how ECS Systems can help you? We may have the
                 answer in our FAQs.
               </p>
-              <Link href="/faqs">
-                <Button variant="outline" size="sm">
+              <Link href="/faqs" className="block">
+                <Button variant="outline" size="sm" className="w-full sm:w-auto">
                   FAQs
                   <ArrowRight className="w-4 h-4 ml-2" strokeWidth={1.5} />
                 </Button>

@@ -282,6 +282,7 @@ export default function ContactForm() {
         variant="primary"
         size="lg"
         disabled={isPending}
+        className="w-full sm:w-auto"
       >
         {isPending ? (
           <>

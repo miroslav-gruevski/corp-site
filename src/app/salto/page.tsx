@@ -262,8 +262,8 @@ export default function SaltoPage() {
               <p className="text-sm text-foreground-muted mb-4">
                 View pricing and order SALTO products from our online shop.
               </p>
-              <a href={SHOP_URL} target="_blank" rel="noopener noreferrer">
-                <Button variant="primary" size="sm">
+              <a href={SHOP_URL} target="_blank" rel="noopener noreferrer" className="block w-full sm:w-auto">
+                <Button variant="primary" size="sm" className="w-full sm:w-auto">
                   Visit Shop
                   <ExternalLink className="w-3.5 h-3.5 ml-2" strokeWidth={1.5} />
                 </Button>
