@@ -121,9 +121,9 @@ export default function Header() {
   };
 
   return (
-    <header className={`sticky top-0 z-50 bg-white border-b transition-shadow duration-300 ${isScrolled ? 'shadow-md border-transparent' : 'border-border'}`}>
-      {/* Top bar - contact info */}
-      <div className="hidden lg:block bg-primary text-white">
+    <header className="sticky top-0 z-50 bg-white/80 backdrop-blur-xl backdrop-saturate-150">
+      {/* Top bar - contact info (hides on scroll) */}
+      <div className={`hidden lg:block bg-primary text-white transition-all duration-300 overflow-hidden ${isScrolled ? 'max-h-0' : 'max-h-12'}`}>
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between h-10 text-sm">
             <div className="flex items-center gap-6">
@@ -151,6 +151,7 @@ export default function Header() {
       </div>
 
       {/* Main navigation */}
+      <div className={`border-b transition-shadow duration-300 ${isScrolled ? 'shadow-md border-transparent' : 'border-border'}`}>
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-[72px]">
           {/* Logo */}
@@ -253,6 +254,7 @@ export default function Header() {
             </button>
           </div>
         </div>
+      </div>
       </div>
 
       {/* Mobile menu */}

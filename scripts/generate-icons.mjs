@@ -1,9 +1,10 @@
 /**
  * Generate favicon and apple-touch-icon PNGs from the ECS logo SVG.
+ * Generates both light-mode (blue on white) and dark-mode (white on transparent) versions.
  * Run: node scripts/generate-icons.mjs
  */
 import sharp from 'sharp';
-import { readFileSync, mkdirSync } from 'fs';
+import { readFileSync, writeFileSync, mkdirSync } from 'fs';
 import { join, dirname } from 'path';
 import { fileURLToPath } from 'url';
 
@@ -12,39 +13,66 @@ const rootDir = join(__dirname, '..');
 const publicDir = join(rootDir, 'public');
 const iconsDir = join(publicDir, 'icons');
 
-// Ensure icons directory exists
 mkdirSync(iconsDir, { recursive: true });
+mkdirSync(join(publicDir, 'images'), { recursive: true });
 
-const svgBuffer = readFileSync(join(publicDir, 'ECS-logo.svg'));
+const svgContent = readFileSync(join(publicDir, 'ECS-logo.svg'), 'utf-8');
+const svgBuffer = Buffer.from(svgContent);
 
-const sizes = [
+// Create a white version of the SVG for dark mode
+const whiteSvg = svgContent.replace(/#27316B/gi, '#FFFFFF');
+const whiteSvgBuffer = Buffer.from(whiteSvg);
+
+// --- Standard icons (blue logo, transparent bg) ---
+const standardIcons = [
   { name: 'favicon.png', size: 32, dir: publicDir },
   { name: 'favicon-16x16.png', size: 16, dir: iconsDir },
   { name: 'favicon-32x32.png', size: 32, dir: iconsDir },
-  { name: 'apple-touch-icon.png', size: 180, dir: publicDir },
   { name: 'icon-192x192.png', size: 192, dir: iconsDir },
   { name: 'icon-512x512.png', size: 512, dir: iconsDir },
 ];
 
-// Also generate OG image (1200x630) with logo centered on branded background
+// --- Apple touch icon (blue logo on white background) ---
+async function generateAppleTouchIcon() {
+  await sharp(svgBuffer)
+    .resize(160, 160, { fit: 'contain', background: { r: 0, g: 0, b: 0, alpha: 0 } })
+    .extend({
+      top: 10,
+      bottom: 10,
+      left: 10,
+      right: 10,
+      background: { r: 255, g: 255, b: 255, alpha: 1 },
+    })
+    .resize(180, 180)
+    .png()
+    .toFile(join(publicDir, 'apple-touch-icon.png'));
+  console.log('✓ apple-touch-icon.png (180x180, blue on white)');
+}
+
+// --- Dark mode icons (white logo, transparent bg) ---
+const darkIcons = [
+  { name: 'favicon-dark.png', size: 32, dir: publicDir },
+  { name: 'favicon-dark-16x16.png', size: 16, dir: iconsDir },
+  { name: 'favicon-dark-32x32.png', size: 32, dir: iconsDir },
+];
+
+// --- OG image ---
 async function generateOgImage() {
   const logoSize = 280;
   const width = 1200;
   const height = 630;
 
-  // Create the logo at desired size
-  const logo = await sharp(svgBuffer)
+  const logo = await sharp(whiteSvgBuffer)
     .resize(logoSize, logoSize, { fit: 'contain', background: { r: 0, g: 0, b: 0, alpha: 0 } })
     .png()
     .toBuffer();
 
-  // Compose the OG image: navy background with logo centered + tagline area
-  const ogImage = await sharp({
+  await sharp({
     create: {
       width,
       height,
       channels: 4,
-      background: { r: 30, g: 58, b: 95, alpha: 1 }, // #1e3a5f primary
+      background: { r: 30, g: 58, b: 95, alpha: 1 },
     },
   })
     .composite([
@@ -53,14 +81,13 @@ async function generateOgImage() {
         top: Math.round((height - logoSize) / 2) - 40,
         left: Math.round((width - logoSize) / 2),
       },
-      // Add a subtle accent bar at the bottom
       {
         input: {
           create: {
             width: 200,
             height: 4,
             channels: 4,
-            background: { r: 232, g: 119, b: 34, alpha: 1 }, // #e87722 accent
+            background: { r: 232, g: 119, b: 34, alpha: 1 },
           },
         },
         top: height - 130,
@@ -71,23 +98,35 @@ async function generateOgImage() {
     .toFile(join(publicDir, 'images', 'og-image.png'));
 
   console.log('✓ og-image.png (1200x630)');
-  return ogImage;
 }
 
 async function main() {
-  // Ensure images directory exists for OG image
-  mkdirSync(join(publicDir, 'images'), { recursive: true });
-
-  // Generate icon PNGs
-  for (const { name, size, dir } of sizes) {
+  // Standard (blue) icons
+  for (const { name, size, dir } of standardIcons) {
     await sharp(svgBuffer)
-      .resize(size, size, { fit: 'contain', background: { r: 255, g: 255, b: 255, alpha: 0 } })
+      .resize(size, size, { fit: 'contain', background: { r: 0, g: 0, b: 0, alpha: 0 } })
       .png()
       .toFile(join(dir, name));
-    console.log(`✓ ${name} (${size}x${size})`);
+    console.log(`✓ ${name} (${size}x${size}, blue)`);
   }
 
-  // Generate OG image
+  // Apple touch icon (blue on white bg)
+  await generateAppleTouchIcon();
+
+  // Dark mode (white) icons
+  for (const { name, size, dir } of darkIcons) {
+    await sharp(whiteSvgBuffer)
+      .resize(size, size, { fit: 'contain', background: { r: 0, g: 0, b: 0, alpha: 0 } })
+      .png()
+      .toFile(join(dir, name));
+    console.log(`✓ ${name} (${size}x${size}, white for dark mode)`);
+  }
+
+  // Save white SVG for reference
+  writeFileSync(join(iconsDir, 'icon-white-512x512.svg'), whiteSvg);
+  console.log('✓ icon-white-512x512.svg');
+
+  // OG image
   await generateOgImage();
 
   console.log('\nAll icons generated successfully!');

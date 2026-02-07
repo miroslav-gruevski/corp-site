@@ -10,7 +10,7 @@ import WebVitals from '@/components/WebVitals';
 
 const lato = Lato({
   subsets: ['latin'],
-  weight: ['300', '400', '700', '900'],
+  weight: ['400', '700', '900'],
   display: 'swap',
 });
 
@@ -120,6 +120,9 @@ export default function RootLayout({
   return (
     <html lang="en" data-scroll-behavior="smooth">
       <head>
+        {/* Favicon for light/dark mode */}
+        <link rel="icon" href="/favicon.png" sizes="32x32" type="image/png" media="(prefers-color-scheme: light)" />
+        <link rel="icon" href="/favicon-dark.png" sizes="32x32" type="image/png" media="(prefers-color-scheme: dark)" />
         <JsonLd type="organization" />
         <JsonLd type="website" />
         {/* Geo meta tags for Bing local SEO */}
