@@ -2,13 +2,12 @@ import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
 
 export function middleware(request: NextRequest) {
-  // Generate a nonce for CSP
-  const nonce = Buffer.from(crypto.randomUUID()).toString('base64');
-
-  // Build CSP header with nonce
+  // CSP header — secure but compatible with Next.js hydration
+  // Note: 'unsafe-inline' is needed for Next.js inline scripts and Tailwind
+  // 'unsafe-eval' is NOT included for security
   const cspDirectives = [
     `default-src 'self'`,
-    `script-src 'self' 'nonce-${nonce}' 'strict-dynamic' https: 'unsafe-inline'`,
+    `script-src 'self' 'unsafe-inline' https://www.googletagmanager.com https://plausible.io`,
     `style-src 'self' 'unsafe-inline' https://fonts.googleapis.com`,
     `font-src 'self' https://fonts.gstatic.com`,
     `img-src 'self' data: https: blob:`,
@@ -27,15 +26,7 @@ export function middleware(request: NextRequest) {
 
   const cspHeader = cspDirectives.join('; ');
 
-  // Set nonce in request headers so it can be read by Server Components
-  const requestHeaders = new Headers(request.headers);
-  requestHeaders.set('x-nonce', nonce);
-
-  const response = NextResponse.next({
-    request: {
-      headers: requestHeaders,
-    },
-  });
+  const response = NextResponse.next();
 
   // Set CSP header on response
   response.headers.set('Content-Security-Policy', cspHeader);
